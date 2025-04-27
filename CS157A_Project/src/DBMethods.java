@@ -12,7 +12,7 @@ import java.util.*;
 public class DBMethods {
     public Connection connect() {
 
-        String url = "jdbc:sqlite:/Users/singaramsubramanyan/IdeaProjects/CS157A_Project/src/bookstoreDB.db"; // Change the path to your database file
+        String url = "jdbc:sqlite:/Users/singaramsubramanyan/Documents/GitHub/CS157A_Project/CS157A_Project/src/bookstoreDB.db"; // Change the path to your database file
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url);
@@ -87,21 +87,23 @@ public class DBMethods {
 
 
     public void addToCart (int bookID, int quantity, int custID) throws ItemNotInStockException{
-        String itemCartQuery = String.format("SELECT book_id, quantity FROM Cart WHERE book_id = %d AND customer_id = %d;", bookID, custID);
+        String stockCheck = String.format("SELECT id, Title, stock FROM Books WHERE id = %d;", bookID);
+        String itemCartQuery = String.format("SELECT book_id, quantity, Title, stock FROM Cart LEFT JOIN Books ON Cart.book_id = Books.id WHERE book_id = %d AND customer_id = %d;", bookID, custID);
         String itemQuantityUpdate = String.format("UPDATE Cart SET quantity = quantity + %d WHERE Cart.book_id = %d AND Cart.customer_id = %d;", quantity, bookID, custID);
         String itemAdd = String.format("INSERT INTO Cart (customer_id, book_id, quantity) VALUES (%d, %d, %d);",custID,bookID,quantity);
 
         try (Statement statement = connect().createStatement()) {
-            ResultSet itemInCart = statement.executeQuery(itemCartQuery);
-            int currStock = itemInCart.getInt("stock");
-            int purchaseQuantity = itemInCart.getInt("quantity");
+            ResultSet DBStockCheck = statement.executeQuery(stockCheck);
+            int currStock = DBStockCheck.getInt("stock"); //change to new query to get
+            System.out.println(DBStockCheck.getInt("stock"));
             if(currStock==0){
-                throw new ItemNotInStockException(String.format("%s is currently not in stock, but more is on the way! \n Please remove item to place order.",itemInCart.getString("Title")));
+                throw new ItemNotInStockException(String.format("%s is currently not in stock, but more is on the way! \n Please remove item to place order.",DBStockCheck.getString("Title")));
             }
-            else if(currStock < purchaseQuantity){
-                throw new ItemNotInStockException(String.format("%s available stock: %d \n Please reduce quantity to place order",itemInCart.getString("Title"),currStock));
+            else if(currStock < quantity){
+                throw new ItemNotInStockException(String.format("%s available stock: %d \n Please reduce quantity to place order",DBStockCheck.getString("Title"),currStock));
             }
 
+            ResultSet itemInCart = statement.executeQuery(itemCartQuery);
             if (itemInCart.next()) {
                 statement.executeUpdate(itemQuantityUpdate);
             } else {
@@ -153,10 +155,11 @@ public class DBMethods {
                     throw new ItemNotInStockException(String.format("%s available stock: %d \n Please reduce quantity to place order",itemsInCart.getString("Title"),currStock));
                 }
             }
-            while(itemsInCart.next()) {
-                String itemOrder = String.format("INSERT INTO Orders (id, customer_id, book_id, quantity, order_date) VALUES (%d, %d, %d,%d, '%s');",orderID,custID,itemsInCart.getInt("book_id"), itemsInCart.getInt("quantity"), LocalDate.now());
-                String itemDelete = String.format("DELETE FROM Cart WHERE Cart.book_id = %d AND Cart.customer_id = %d;", itemsInCart.getInt("book_id"), custID);
-                String itemQuantityUpdate = String.format("UPDATE Books SET quantity = quantity - %d WHERE Books.id = %d;", itemsInCart.getInt("quantity"), itemsInCart.getInt("book_id"));
+            ResultSet itemsInCart_1 = statement.executeQuery(itemsInOrder);
+            while(itemsInCart_1.next()) {
+                String itemOrder = String.format("INSERT INTO Orders (id, customer_id, book_id, quantity, order_date) VALUES (%d, %d, %d,%d, '%s');",orderID,custID,itemsInCart_1.getInt("book_id"), itemsInCart_1.getInt("quantity"), LocalDate.now());
+                String itemDelete = String.format("DELETE FROM Cart WHERE Cart.book_id = %d AND Cart.customer_id = %d;", itemsInCart_1.getInt("book_id"), custID);
+                String itemQuantityUpdate = String.format("UPDATE Books SET stock = stock - %d WHERE Books.id = %d;", itemsInCart_1.getInt("quantity"), itemsInCart_1.getInt("book_id"));
                 statement.executeUpdate(itemOrder);
                 statement.executeUpdate(itemDelete);
                 statement.executeUpdate(itemQuantityUpdate);
@@ -263,7 +266,7 @@ public class DBMethods {
 //    }
 
     public List<Book> search(String param) throws SearchNotFoundException {
-        String searchQuery = "SELECT Title, Author, Genre, Price CASE WHEN StockCount > 0 THEN 'In Stock' ELSE 'Out of Stock' END AS Availability FROM Books;";
+        String searchQuery = "SELECT Title, Author, Genre, Price, CASE WHEN stock > 0 THEN 'In Stock' ELSE 'Out of Stock' END AS Availability FROM Books;";
         List<Book> books = new LinkedList<>();
 
         try (PreparedStatement pstmt = connect().prepareStatement(searchQuery)) {
