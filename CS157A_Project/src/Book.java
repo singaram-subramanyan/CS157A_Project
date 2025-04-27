@@ -18,6 +18,7 @@ public class Book {
         return "Title: " + title + '\n' + '\t' +
                 "Author: " + author + '\n' + '\t' +
                 "Genre: " + genre + '\n' + '\t' +
-                "price: " + price;
+                "price: " + price + '\n' + '\t' +
+                "Availability: " + availability;
     }
 }
