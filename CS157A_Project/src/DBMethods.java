@@ -296,4 +296,18 @@ public class DBMethods {
             throw new RuntimeException(e);
         }
     }
-}
+
+    public int getCustID(String email) {
+        String searchQuery = String.format("SELECT id FROM Customer WHERE email_id='%s", email);
+        int id = 0;
+        try (Statement statement = connect().createStatement()) {
+            ResultSet custID = statement.executeQuery(searchQuery);
+            id = custID.getInt("id");
+        } catch (SQLException e) {
+            e.printStackTrace(System.err);
+        }
+
+        return id;
+    }
+    }
+
