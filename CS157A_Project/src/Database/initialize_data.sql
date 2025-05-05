@@ -7,9 +7,14 @@ INSERT INTO Cart (customer_id, book_id, quantity) VALUES (123374088, 12, 1);
 INSERT INTO Cart (customer_id, book_id, quantity) VALUES (226839863, 14, 2);
 INSERT INTO Cart (customer_id, book_id, quantity) VALUES (226839863, 15, 1);
 INSERT INTO Cart (customer_id, book_id, quantity) VALUES (153397236, 9, 1);
-
-
-
+INSERT INTO Cart (customer_id, book_id, quantity) VALUES (2370152, 4, 1);
+INSERT INTO Cart (customer_id, book_id, quantity) VALUES (2383429, 6, 2);
+INSERT INTO Cart (customer_id, book_id, quantity) VALUES (64350162, 10, 1);
+INSERT INTO Cart (customer_id, book_id, quantity) VALUES (4951443, 2, 3);
+INSERT INTO Cart (customer_id, book_id, quantity) VALUES (1699963747, 8, 1);
+INSERT INTO Cart (customer_id, book_id, quantity) VALUES (123374088, 11, 2);
+INSERT INTO Cart (customer_id, book_id, quantity) VALUES (237569837, 5, 1);
+INSERT INTO Cart (customer_id, book_id, quantity) VALUES (167511347, 7, 1);
 
 INSERT INTO Customer (id, first_name, last_name, phone, email_id, account_password) VALUES (2370152, "Jane", "Doe", "1234567890", "jane.doe@gmail.com", "$2a$10$aOTjIzQIjrlvCi1xvWD5fuNDhuaO6xH6hQaS.f.UppyHgXDdEQOnC");
 INSERT INTO Customer (id, first_name, last_name, phone, email_id, account_password) VALUES (2383429, "John", "Doe", "1234560987", "john.doe@gmail.com", "$2a$10$328gDCoXFfIpRqqteHmsd.tg6Nbwswp3EUN1Gun0hgtVj3z4b4nOS");
@@ -46,5 +51,19 @@ INSERT INTO Books ("id", "Title", "Author", "Genre", "Price", "stock") VALUES (1
 INSERT INTO Books ("id", "Title", "Author", "Genre", "Price", "stock") VALUES (15, 'The Road', 'Cormac McCarthy', 'Post-apocalyptic', 11.49, 130);
 
 INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107077, 153397236, 9, 1, '2025-04-23');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107070, 153397236, 2, 1, '2025-04-23');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107070, 153397236, 3, 1, '2025-04-23');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107071, 160004112, 5, 2, '2025-04-24');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107072, 160004112, 1, 1, '2025-04-24');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107073, 147891204, 7, 1, '2025-04-25');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107074, 147891204, 8, 3, '2025-04-25');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107080, 164200301, 4, 1, '2025-04-26');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107080, 164200301, 6, 2, '2025-04-26');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107081, 172903112, 11, 1, '2025-04-26');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107082, 172903112, 14, 1, '2025-04-27');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107083, 178882910, 7, 2, '2025-04-27');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107084, 190033221, 10, 1, '2025-04-27');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107085, 190033221, 1, 1, '2025-04-28');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date")  VALUES (114107085, 190033221, 13, 1, '2025-04-28');
 
 COMMIT;
