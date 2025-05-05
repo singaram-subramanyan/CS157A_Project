@@ -11,7 +11,7 @@ import java.util.*;
 public class DBMethods {
     public Connection connect() {
 
-        String url = "jdbc:sqlite:/Users/singaramsubramanyan/Documents/GitHub/CS157A_Project/CS157A_Project/src/Database/bookstoreDB.db"; // Change the path to your database file
+        String url = "jdbc:sqlite:/Users/singaramsubramanyan/Documents/GitHub/CS157A_Project/CS157A_Project/src/Database/BookstoreDatabase.db"; // Change the path to your database file
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url);
@@ -143,6 +143,7 @@ public class DBMethods {
             int orderID = ((customerInfo.getString("first_name").hashCode() + customerInfo.getString("last_name").hashCode() + customerInfo.getString("email_id").hashCode() + LocalDateTime.now().hashCode()) & 0xfffffff);
             ResultSet itemsInCart = statement.executeQuery(itemsInOrder);
             while(itemsInCart.next()){
+                System.out.println(1);
                 int currStock = itemsInCart.getInt("stock");
                 int purchaseQuantity = itemsInCart.getInt("quantity");
                 if(currStock==0){
@@ -155,6 +156,7 @@ public class DBMethods {
             String itemsInOrder_1 = String.format("SELECT book_id, quantity, stock, Title FROM Cart LEFT JOIN Books ON Cart.book_id = Books.id WHERE customer_id = %d;", custID);
             ResultSet itemsInCart_1 = statement.executeQuery(itemsInOrder_1);
             while(itemsInCart_1.next()) {
+                System.out.println(2);
                 String itemOrder = String.format("INSERT INTO Orders (id, customer_id, book_id, quantity, order_date) VALUES (%d, %d, %d,%d, '%s');",orderID,custID,itemsInCart_1.getInt("book_id"), itemsInCart_1.getInt("quantity"), LocalDate.now());
                 String itemDelete = String.format("DELETE FROM Cart WHERE Cart.book_id = %d AND Cart.customer_id = %d;", itemsInCart_1.getInt("book_id"), custID);
                 String itemQuantityUpdate = String.format("UPDATE Books SET stock = stock - %d WHERE Books.id = %d;", itemsInCart_1.getInt("quantity"), itemsInCart_1.getInt("book_id"));
