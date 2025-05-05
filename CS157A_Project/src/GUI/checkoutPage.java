@@ -1,5 +1,6 @@
 package GUI;
 import Custom_Exceptions.CustomerExistsException;
+import Custom_Exceptions.InvalidEntryException;
 import Custom_Exceptions.ItemNotInStockException;
 import JDBC_Java.*;
 import javafx.geometry.Insets;
@@ -33,15 +34,15 @@ public class checkoutPage {
 
         Label addressLabel = new Label("Shipping Address:");
         TextField userAddress = new TextField();
-        userAddress.setPromptText("Enter your Email");
+        userAddress.setPromptText("Enter the Shipping Address");
 
         Label cardNumlabel = new Label("Card Number:");
         TextField cardNum = new TextField();
-        cardNum.setPromptText("Enter your Phone Number");
+        cardNum.setPromptText("Enter your Card Number");
 
         Label cVVLabel = new Label("CVV:");
         PasswordField cVV = new PasswordField();
-        cVV.setPromptText("Enter your password");
+        cVV.setPromptText("Enter Card CVV");
 
         Label expLabel = new Label("Exp Date:");
         TextField expDate = new TextField();
@@ -77,6 +78,15 @@ public class checkoutPage {
 
 
             try {
+                if(cardNum.getText().length() != 16){
+                    throw new InvalidEntryException("Please Enter a valid Card Number");
+                }
+                if(cVV.getText().length() != 3){
+                    throw new InvalidEntryException("Please Enter a valid CVV");
+                }
+                if(expDate.getText().length() != 5){
+                    throw new InvalidEntryException("Please Enter a valid Expiration date in format MM/YY");
+                }
                 booksDB.placeOrder(custId);
                 Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
                 successAlert.setContentText("Order placed successfully and will be shipped in 5-7 business days!");
@@ -89,6 +99,10 @@ public class checkoutPage {
                 errorAlert.showAndWait();
                 cartPage cartPage = new cartPage(custId);
                 cartPage.start(stage);
+            } catch (InvalidEntryException ex) {
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setContentText(ex.getMessage());
+                errorAlert.showAndWait();
             }
         });
 

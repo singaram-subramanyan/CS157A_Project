@@ -33,6 +33,56 @@ public class searchPage {
 
         VBox searchResultContainer = new VBox(30);  // Container for search results
         searchResultContainer.setPadding(new Insets(10));
+        List<Book> allBooks = booksDB.returnAll();
+        for (Book book : allBooks) {
+            Label title = new Label(book.getTitle());
+            Label author = new Label(book.getAuthor());
+            Label genre = new Label(book.getGenre());
+            Label price = new Label("$" + book.getPrice());
+            Label availability = new Label(book.getAvailability());
+
+            Button addButton = new Button("Add");
+            addButton.setOnAction(event -> {
+                if (!Objects.equals(book.getAvailability(), "In Stock")) {
+                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.setContentText("This book is not currently available.");
+                    errorAlert.showAndWait();
+                    return;
+                }
+
+                TextInputDialog quantityDialog = new TextInputDialog();
+                quantityDialog.setTitle("Add to Cart");
+                quantityDialog.setHeaderText("Enter quantity for: " + book.getTitle());
+                quantityDialog.setContentText("Quantity:");
+
+                quantityDialog.showAndWait().ifPresent(input -> {
+                    try {
+                        int quantity = Integer.parseInt(input);
+                        if (quantity <= 0) {
+                            throw new NumberFormatException();
+                        }
+                        booksDB.addToCart(book.getId(), quantity, custId);
+                        Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                        successAlert.setContentText("Item Added to Cart!");
+                        successAlert.showAndWait();
+                    } catch (NumberFormatException ex) {
+                        Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                        errorAlert.setContentText("Please enter a valid positive number.");
+                        errorAlert.showAndWait();
+                    } catch (ItemNotInStockException ex) {
+                        Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                        errorAlert.setContentText(ex.getMessage());
+                        errorAlert.showAndWait();
+                    }
+                });
+            });
+
+            HBox row = new HBox(20, title, author, genre, price, availability, addButton);
+            searchResultContainer.getChildren().add(row);
+        }
+
+
+
 
         searchButton.setOnAction(e -> {
             String filter = searchField.getText();
@@ -84,8 +134,7 @@ public class searchPage {
                         });
                     });
 
-                    HBox row = new HBox(30, title, author, genre, price, availability, addButton);
-                    row.setPadding(new Insets(5));
+                    HBox row = new HBox(20, title, author, genre, price, availability, addButton);
                     searchResultContainer.getChildren().add(row);
                 }
 
@@ -107,7 +156,7 @@ public class searchPage {
         VBox layout = new VBox(30, searchBar, searchResultContainer);
         layout.setPadding(new Insets(20));
 
-        Scene scene = new Scene(layout, 900, 500);
+        Scene scene = new Scene(layout, 1500, 2000);
         stage.setScene(scene);
         stage.setTitle("Bookstore");
         stage.show();

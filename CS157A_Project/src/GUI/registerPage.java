@@ -1,5 +1,6 @@
 package GUI;
 import Custom_Exceptions.CustomerExistsException;
+import Custom_Exceptions.InvalidEntryException;
 import JDBC_Java.*;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -70,13 +71,19 @@ public class registerPage {
             String password = userPassword.getText();
 
             try {
+                if(!email.contains("@") || !email.contains(".")){
+                    throw new InvalidEntryException("Please Enter a valid email");
+                }
+                if(phoneNumber.length() != 10){
+                    throw new InvalidEntryException("Please Enter a valid phone number");
+                }
                 db.register(firstName,lastName,email, phoneNumber,password);
                 Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
                 successAlert.setContentText("Registration Successful!");
                 successAlert.showAndWait();
                 LoginPage loginPage = new LoginPage();
                 loginPage.start(stage);
-            } catch (CustomerExistsException ex) {
+            } catch (InvalidEntryException | CustomerExistsException ex) {
                 Alert errorAlert = new Alert(Alert.AlertType.ERROR);
                 errorAlert.setContentText(ex.getMessage());
                 errorAlert.showAndWait();

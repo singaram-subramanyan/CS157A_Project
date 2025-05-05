@@ -142,8 +142,13 @@ public class DBMethods {
             ResultSet customerInfo = statement.executeQuery(customerInfoQuery);
             int orderID = ((customerInfo.getString("first_name").hashCode() + customerInfo.getString("last_name").hashCode() + customerInfo.getString("email_id").hashCode() + LocalDateTime.now().hashCode()) & 0xfffffff);
             ResultSet itemsInCart = statement.executeQuery(itemsInOrder);
+            List<List<Integer>> cartList = new LinkedList<>();
             while(itemsInCart.next()){
                 System.out.println(1);
+                List<Integer> itemList = new LinkedList<>();
+                itemList.add(itemsInCart.getInt("book_id"));
+                itemList.add(itemsInCart.getInt("quantity"));
+                cartList.add(itemList);
                 int currStock = itemsInCart.getInt("stock");
                 int purchaseQuantity = itemsInCart.getInt("quantity");
                 if(currStock==0){
@@ -153,13 +158,12 @@ public class DBMethods {
                     throw new ItemNotInStockException(String.format("%s available stock: %d \n Please reduce quantity to place order",itemsInCart.getString("Title"),currStock));
                 }
             }
-            String itemsInOrder_1 = String.format("SELECT book_id, quantity, stock, Title FROM Cart LEFT JOIN Books ON Cart.book_id = Books.id WHERE customer_id = %d;", custID);
-            ResultSet itemsInCart_1 = statement.executeQuery(itemsInOrder_1);
-            while(itemsInCart_1.next()) {
+
+            for(List<Integer> item: cartList) {
                 System.out.println(2);
-                String itemOrder = String.format("INSERT INTO Orders (id, customer_id, book_id, quantity, order_date) VALUES (%d, %d, %d,%d, '%s');",orderID,custID,itemsInCart_1.getInt("book_id"), itemsInCart_1.getInt("quantity"), LocalDate.now());
-                String itemDelete = String.format("DELETE FROM Cart WHERE Cart.book_id = %d AND Cart.customer_id = %d;", itemsInCart_1.getInt("book_id"), custID);
-                String itemQuantityUpdate = String.format("UPDATE Books SET stock = stock - %d WHERE Books.id = %d;", itemsInCart_1.getInt("quantity"), itemsInCart_1.getInt("book_id"));
+                String itemOrder = String.format("INSERT INTO Orders (id, customer_id, book_id, quantity, order_date) VALUES (%d, %d, %d,%d, '%s');",orderID,custID,item.get(0), item.get(1), LocalDate.now());
+                String itemDelete = String.format("DELETE FROM Cart WHERE Cart.book_id = %d AND Cart.customer_id = %d;", item.get(0), custID);
+                String itemQuantityUpdate = String.format("UPDATE Books SET stock = stock - %d WHERE Books.id = %d;", item.get(1), item.get(0));
                 statement.executeUpdate(itemOrder);
                 statement.executeUpdate(itemDelete);
                 statement.executeUpdate(itemQuantityUpdate);
@@ -269,9 +273,9 @@ public class DBMethods {
         String searchQuery = "SELECT id, Title, Author, Genre, Price, CASE WHEN stock > 0 THEN 'In Stock' ELSE 'Out of Stock' END AS Availability FROM Books;";
         List<Book> books = new LinkedList<>();
 
-        try (PreparedStatement pstmt = connect().prepareStatement(searchQuery)) {
 
-            try (ResultSet rs = pstmt.executeQuery()) {
+            try (Statement statement = connect().createStatement()) {
+                ResultSet rs = statement.executeQuery(searchQuery);
                 while (rs.next()) {
                     int id = rs.getInt("id");
                     String title = rs.getString("Title");
@@ -285,12 +289,40 @@ public class DBMethods {
                     }
 
                 }
-            }
+
 
             if (books.isEmpty()) {
                 throw new SearchNotFoundException("No results found, please search for something else.");
             }
 
+            return books;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Book> returnAll() {
+        String searchQuery = "SELECT * FROM Books;";
+        List<Book> books = new LinkedList<>();
+
+        try (Statement statement = connect().createStatement()) {
+            ResultSet searchResult = statement.executeQuery(searchQuery);
+                while (searchResult.next()) {
+                    int id = searchResult.getInt("id");
+                    String title = searchResult.getString("Title");
+                    String author = searchResult.getString("Author");
+                    String genre = searchResult.getString("Genre");
+                    float price = searchResult.getFloat("Price");
+                    String availability = "";
+                    if(searchResult.getInt("stock") > 0){
+                        availability = "In Stock";
+                    }
+                    else{
+                        availability = "Out of Stock";
+                    }
+                    books.add(new Book(id,title,author,genre,price, availability));
+                }
             return books;
 
         } catch (SQLException e) {
