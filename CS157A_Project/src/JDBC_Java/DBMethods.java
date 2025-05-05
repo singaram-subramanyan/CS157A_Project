@@ -11,7 +11,7 @@ import java.util.*;
 public class DBMethods {
     public Connection connect() {
 
-        String url = "jdbc:sqlite:/Users/singaramsubramanyan/Documents/GitHub/CS157A_Project/CS157A_Project/src/bookstoreDB.db"; // Change the path to your database file
+        String url = "jdbc:sqlite:/Users/singaramsubramanyan/Documents/GitHub/CS157A_Project/CS157A_Project/src/Database/bookstoreDB.db"; // Change the path to your database file
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url);
@@ -23,10 +23,10 @@ public class DBMethods {
 
 
 
-    public void register(String fName, String lName, String email, int phoneNum, String password) throws CustomerExistsException {
+    public void register(String fName, String lName, String email, String phoneNum, String password) throws CustomerExistsException {
         int id = ((fName.hashCode() + lName.hashCode()) & 0xfffffff);
         String existsQuery = String.format("SELECT CASE WHEN EXISTS (SELECT * FROM Customer WHERE id = %d) THEN 'Found' ELSE 'Not Found' END AS custExists;",id);
-        String insertQuery = String.format("INSERT INTO Customer (id, first_name, last_name, phone, email_id, account_password) VALUES (%d, '%s', '%s', %d, '%s', '%s');",id,fName,lName,phoneNum,email, BCrypt.hashpw(password, BCrypt.gensalt()));
+        String insertQuery = String.format("INSERT INTO Customer (id, first_name, last_name, phone, email_id, account_password) VALUES (%d, '%s', '%s', '%s', '%s', '%s');",id,fName,lName,phoneNum,email, BCrypt.hashpw(password, BCrypt.gensalt()));
 
         try (Statement statement = connect().createStatement()){
             ResultSet result_exists = statement.executeQuery(existsQuery);
@@ -152,7 +152,8 @@ public class DBMethods {
                     throw new ItemNotInStockException(String.format("%s available stock: %d \n Please reduce quantity to place order",itemsInCart.getString("Title"),currStock));
                 }
             }
-            ResultSet itemsInCart_1 = statement.executeQuery(itemsInOrder);
+            String itemsInOrder_1 = String.format("SELECT book_id, quantity, stock, Title FROM Cart LEFT JOIN Books ON Cart.book_id = Books.id WHERE customer_id = %d;", custID);
+            ResultSet itemsInCart_1 = statement.executeQuery(itemsInOrder_1);
             while(itemsInCart_1.next()) {
                 String itemOrder = String.format("INSERT INTO Orders (id, customer_id, book_id, quantity, order_date) VALUES (%d, %d, %d,%d, '%s');",orderID,custID,itemsInCart_1.getInt("book_id"), itemsInCart_1.getInt("quantity"), LocalDate.now());
                 String itemDelete = String.format("DELETE FROM Cart WHERE Cart.book_id = %d AND Cart.customer_id = %d;", itemsInCart_1.getInt("book_id"), custID);
@@ -187,7 +188,7 @@ public class DBMethods {
     }
 
     public List<cartObject> cartContent(int custID) {
-        String itemsInCartQuery = String.format("SELECT Title, quantity, quantity*Price AS Price FROM Cart LEFT JOIN Books ON Cart.book_id = Books.id WHERE Cart.customer_id = %d;", custID);
+        String itemsInCartQuery = String.format("SELECT book_id, Title, quantity, quantity*Price AS Price FROM Cart LEFT JOIN Books ON Cart.book_id = Books.id WHERE Cart.customer_id = %d;", custID);
         List<cartObject> cart_list = new LinkedList<>();
 
 
@@ -197,7 +198,8 @@ public class DBMethods {
                 String title = cart.getString("Title");
                 int quantity = cart.getInt("quantity");
                 float price = cart.getFloat("Price");
-                cart_list.add((new cartObject(title,quantity,price)));
+                int id = cart.getInt("book_id");
+                cart_list.add((new cartObject(title,quantity,price,id)));
             }
             return cart_list;
         } catch (SQLException e) {

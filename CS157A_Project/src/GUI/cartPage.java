@@ -1,5 +1,6 @@
 package GUI;
 
+import Custom_Exceptions.ItemNotInCartException;
 import JDBC_Java.*;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -35,7 +36,34 @@ public class cartPage {
             Label quantityLabel = new Label("Quantity: " + item.getQuantity());
             Label priceLabel = new Label("$" + item.getPrice());
 
-            HBox itemRow = new HBox(20, titleLabel, quantityLabel, priceLabel);
+            Button deleteButton = new Button("Delete");
+            deleteButton.setOnAction(event -> {
+                TextInputDialog quantityDialog = new TextInputDialog();
+                quantityDialog.setTitle("Delete Cart");
+                quantityDialog.setHeaderText("Enter quantity for: " + item.getTitle());
+                quantityDialog.setContentText("Quantity:");
+
+                quantityDialog.showAndWait().ifPresent(input -> {
+                    try {
+                        int quantity = Integer.parseInt(input);
+                        if (quantity <= 0 || quantity > item.getQuantity()) {
+                            throw new NumberFormatException();
+                        }
+                        db.deleteFromCart(item.getId(), quantity, custId);
+                        Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                        successAlert.setContentText("Item Deleted from Cart");
+                        successAlert.showAndWait();
+                    } catch (NumberFormatException ex) {
+                        Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                        errorAlert.setContentText("Please enter a valid quantity.");
+                        errorAlert.showAndWait();
+                    } catch (ItemNotInCartException ignored) {
+
+                    }
+                });
+                start(stage);
+            });
+            HBox itemRow = new HBox(20, titleLabel, quantityLabel, priceLabel,deleteButton);
             itemRow.setPadding(new Insets(5));
 
             cartContainer.getChildren().add(itemRow);
@@ -44,14 +72,13 @@ public class cartPage {
         Label totalLabel = new Label("Total: $" + totalCost);
         cartContainer.getChildren().add(totalLabel);
 
-//        checkoutButton.setOnAction(e -> {
-//            Alert checkoutAlert = new Alert(Alert.AlertType.INFORMATION);
-//            checkoutAlert.setContentText("Proceeding to checkout...");
-//            checkoutAlert.showAndWait();
-//        });
+        checkoutButton.setOnAction(e -> {
+            checkoutPage checkoutPage = new checkoutPage(custId);
+            checkoutPage.start(stage);
+        });
 
         continueShoppingButton.setOnAction(e -> {
-            BookstoreSearch searchPage = new BookstoreSearch(custId);
+            searchPage searchPage = new searchPage(custId);
             searchPage.start(stage);
         });
 

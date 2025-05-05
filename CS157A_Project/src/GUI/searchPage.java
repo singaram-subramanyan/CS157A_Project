@@ -11,14 +11,14 @@ import javafx.stage.Stage;
 import java.util.List;
 import java.util.Objects;
 
-public class BookstoreSearch {
+public class searchPage {
 
     private int custId;
-    private DBMethods db;
+    private DBMethods booksDB;
 
-    public BookstoreSearch(int custId) {
+    public searchPage(int custId) {
         this.custId = custId;
-        this.db = new DBMethods();
+        this.booksDB = new DBMethods();
     }
 
     public void start(Stage stage) {
@@ -31,22 +31,22 @@ public class BookstoreSearch {
 
 
 
-        VBox resultsContainer = new VBox(30);  // Container for search results
-        resultsContainer.setPadding(new Insets(10));
+        VBox searchResultContainer = new VBox(30);  // Container for search results
+        searchResultContainer.setPadding(new Insets(10));
 
         searchButton.setOnAction(e -> {
-            String query = searchField.getText();
-            resultsContainer.getChildren().clear();  // Clear previous results
+            String filter = searchField.getText();
+            searchResultContainer.getChildren().clear();  // Clear previous results
 
             try {
-                List<Book> results = db.search(query);
+                List<Book> searchResultList = booksDB.search(filter);
 
-                for (Book book : results) {
-                    Label titleLabel = new Label(book.getTitle());
-                    Label authorLabel = new Label(book.getAuthor());
-                    Label genreLabel = new Label(book.getGenre());
-                    Label priceLabel = new Label("$" + book.getPrice());
-                    Label availLabel = new Label(book.getAvailability());
+                for (Book book : searchResultList) {
+                    Label title = new Label(book.getTitle());
+                    Label author = new Label(book.getAuthor());
+                    Label genre = new Label(book.getGenre());
+                    Label price = new Label("$" + book.getPrice());
+                    Label availability = new Label(book.getAvailability());
 
                     Button addButton = new Button("Add");
                     addButton.setOnAction(event -> {
@@ -57,7 +57,7 @@ public class BookstoreSearch {
                             return;
                         }
 
-                        TextInputDialog quantityDialog = new TextInputDialog("1");
+                        TextInputDialog quantityDialog = new TextInputDialog();
                         quantityDialog.setTitle("Add to Cart");
                         quantityDialog.setHeaderText("Enter quantity for: " + book.getTitle());
                         quantityDialog.setContentText("Quantity:");
@@ -68,7 +68,7 @@ public class BookstoreSearch {
                                 if (quantity <= 0) {
                                     throw new NumberFormatException();
                                 }
-                                db.addToCart(book.getId(), quantity, custId);
+                                booksDB.addToCart(book.getId(), quantity, custId);
                                 Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
                                 successAlert.setContentText("Item Added to Cart!");
                                 successAlert.showAndWait();
@@ -84,9 +84,9 @@ public class BookstoreSearch {
                         });
                     });
 
-                    HBox row = new HBox(30, titleLabel, authorLabel, genreLabel, priceLabel, availLabel, addButton);
+                    HBox row = new HBox(30, title, author, genre, price, availability, addButton);
                     row.setPadding(new Insets(5));
-                    resultsContainer.getChildren().add(row);
+                    searchResultContainer.getChildren().add(row);
                 }
 
             } catch (SearchNotFoundException ex) {
@@ -104,7 +104,7 @@ public class BookstoreSearch {
             cartPage.start(stage);
         });
         HBox searchBar = new HBox(20, searchField, searchButton, viewCartButton, logoutButton);
-        VBox layout = new VBox(30, searchBar, resultsContainer);
+        VBox layout = new VBox(30, searchBar, searchResultContainer);
         layout.setPadding(new Insets(20));
 
         Scene scene = new Scene(layout, 900, 500);

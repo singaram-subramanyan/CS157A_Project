@@ -58,7 +58,7 @@ public class LoginPage extends Application {
 
             try {
                 db.validateLogin(email, password);
-                BookstoreSearch mainPage = new BookstoreSearch(db.getCustID(email));
+                searchPage mainPage = new searchPage(db.getCustID(email));
                 mainPage.start(primaryStage);
             } catch (InvalidLoginException ex) {
                 Alert errorAlert = new Alert(Alert.AlertType.ERROR);
@@ -71,10 +71,10 @@ public class LoginPage extends Application {
             }
         });
 
-//        registerButton.setOnAction(e -> {
-//            RegisterPage registerPage = new RegisterPage();
-//            registerPage.start(primaryStage);
-//        });
+        registerButton.setOnAction(e -> {
+            registerPage registerPage = new registerPage();
+            registerPage.start(primaryStage);
+        });
     }
 
     public static void main(String[] args) {
