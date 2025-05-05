@@ -1,9 +1,8 @@
+package JDBC_Java;
+
 import Custom_Exceptions.*;
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -50,7 +49,7 @@ public class DBMethods {
             ResultSet result_exists = statement.executeQuery(loginQuery);
 
             if(!BCrypt.checkpw(password, result_exists.getString("account_password"))){
-                throw new InvalidLoginException("Invalid Login info. Please check credentials or create account if new user.");
+                throw new InvalidLoginException("Invalid password. Please check credentials.");
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -110,8 +109,6 @@ public class DBMethods {
                 statement.executeUpdate(itemAdd);
             }
         } catch (SQLException e) {
-            e.printStackTrace(System.err);
-        } catch (ItemNotInStockException e) {
             throw new RuntimeException(e);
         }
     }
@@ -189,26 +186,25 @@ public class DBMethods {
 
     }
 
-    public void cartContent(int custID) {
-        String itemsInCartQuery = String.format("""
-        SELECT Books.Title, quantity
-        FROM Cart LEFT JOIN Books ON Cart.book_id = Books.id
-        WHERE Cart.customer_id = %d;
-        """, custID);
-
+    public List<cartObject> cartContent(int custID) {
+        String itemsInCartQuery = String.format("SELECT Title, quantity, quantity*Price AS Price FROM Cart LEFT JOIN Books ON Cart.book_id = Books.id WHERE Cart.customer_id = %d;", custID);
+        List<cartObject> cart_list = new LinkedList<>();
 
 
         try (Statement statement = connect().createStatement()) {
             ResultSet cart = statement.executeQuery(itemsInCartQuery);
             while(cart.next()){
-                System.out.println("Title: " + cart.getString("title"));
-                System.out.println("Quantity: " + cart.getInt("quantity"));;
+                String title = cart.getString("Title");
+                int quantity = cart.getInt("quantity");
+                float price = cart.getFloat("Price");
+                cart_list.add((new cartObject(title,quantity,price)));
             }
+            return cart_list;
         } catch (SQLException e) {
             e.printStackTrace(System.err);
         }
 
-
+        return cart_list;
     }
 
 //    public void cartContent(int custID) {
@@ -266,21 +262,22 @@ public class DBMethods {
 //    }
 
     public List<Book> search(String param) throws SearchNotFoundException {
-        String searchQuery = "SELECT Title, Author, Genre, Price, CASE WHEN stock > 0 THEN 'In Stock' ELSE 'Out of Stock' END AS Availability FROM Books;";
+        String searchQuery = "SELECT id, Title, Author, Genre, Price, CASE WHEN stock > 0 THEN 'In Stock' ELSE 'Out of Stock' END AS Availability FROM Books;";
         List<Book> books = new LinkedList<>();
 
         try (PreparedStatement pstmt = connect().prepareStatement(searchQuery)) {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
+                    int id = rs.getInt("id");
                     String title = rs.getString("Title");
                     String author = rs.getString("Author");
                     String genre = rs.getString("Genre");
                     float price = rs.getFloat("Price");
                     String availability = rs.getString("Availability");
 
-                    if(title.toLowerCase().contains(param.toLowerCase()) || author.contains(param.toLowerCase()) || genre.contains(param.toLowerCase())){
-                        books.add(new Book(title,author,genre,price, availability));
+                    if(title.toLowerCase().contains(param.toLowerCase()) || author.toLowerCase().contains(param.toLowerCase()) || genre.toLowerCase().contains(param.toLowerCase())){
+                        books.add(new Book(id,title,author,genre,price, availability));
                     }
 
                 }
@@ -298,7 +295,7 @@ public class DBMethods {
     }
 
     public int getCustID(String email) {
-        String searchQuery = String.format("SELECT id FROM Customer WHERE email_id='%s", email);
+        String searchQuery = String.format("SELECT id FROM Customer WHERE email_id='%s'", email);
         int id = 0;
         try (Statement statement = connect().createStatement()) {
             ResultSet custID = statement.executeQuery(searchQuery);
