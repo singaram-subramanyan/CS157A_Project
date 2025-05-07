@@ -169,23 +169,6 @@ public class DBMethods {
                 statement.executeUpdate(itemQuantityUpdate);
             }
 
-//            ResultSetMetaData meta = itemsInCart.getMetaData();
-//            int columnCount = meta.getColumnCount();
-//
-//            // Print all column names
-//            System.out.println("Columns in ResultSet:");
-//            for (int i = 1; i <= columnCount; i++) {
-//                System.out.println(i + ": " + meta.getColumnName(i));
-//            }
-//
-//            // Print each row
-//            System.out.println("\nResultSet data:");
-//            while (itemsInCart.next()) {
-//                for (int i = 1; i <= columnCount; i++) {
-//                    System.out.print(meta.getColumnName(i) + ": " + itemsInCart.getString(i) + " | ");
-//                }
-//                System.out.println();
-//            }
 
         } catch (SQLException e) {
             e.printStackTrace(System.err);
@@ -215,59 +198,6 @@ public class DBMethods {
         return cart_list;
     }
 
-//    public void cartContent(int custID) {
-//        String itemsInCartQuery = String.format("""
-//        SELECT *
-//        FROM Customer
-//    """, custID);
-//
-//        try (Statement statement = connect().createStatement();
-//             ResultSet cart = statement.executeQuery(itemsInCartQuery)) {
-//
-//            // Get metadata
-//            ResultSetMetaData meta = cart.getMetaData();
-//            int columnCount = meta.getColumnCount();
-//
-//            // Print all column names
-//            System.out.println("Columns in ResultSet:");
-//            for (int i = 1; i <= columnCount; i++) {
-//                System.out.println(i + ": " + meta.getColumnName(i));
-//            }
-//
-//            // Print each row
-//            System.out.println("\nResultSet data:");
-//            while (cart.next()) {
-//                for (int i = 1; i <= columnCount; i++) {
-//                    System.out.print(meta.getColumnName(i) + ": " + cart.getString(i) + " | ");
-//                }
-//                System.out.println();
-//            }
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace(System.err);
-//        }
-//    }
-
-//    public void DBUpdate() { //Method to only update table content - no application function
-//        String itemsInOrder = String.format("SELECT id, account_password FROM Customer WHERE id=1699963747;");
-//
-//
-//        try (Statement statement = connect().createStatement()) {
-//            ResultSet itemsInCart = statement.executeQuery(itemsInOrder);
-//            while (itemsInCart.next()) {
-//                String pass = BCrypt.hashpw(itemsInCart.getString("account_password"), BCrypt.gensalt());
-//                System.out.println(pass);
-//                int id = itemsInCart.getInt("id");
-//                System.out.println(id);
-//                String itemOrder = String.format("UPDATE Customer SET account_password = '%s' WHERE id = %d;", pass, id);
-//                statement.executeUpdate(itemOrder);
-//            }
-//
-//
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 
     public List<Book> search(String param) throws SearchNotFoundException {
         String searchQuery = "SELECT id, Title, Author, Genre, Price, CASE WHEN stock > 0 THEN 'In Stock' ELSE 'Out of Stock' END AS Availability FROM Books;";
