@@ -6,6 +6,7 @@ public class cartObject {
     public float price;
     public int id;
 
+    //constructor cart object class
     public cartObject(String title, int quantity, float price, int id) {
         this.title = title;
         this.quantity = quantity;
@@ -13,6 +14,7 @@ public class cartObject {
         this.id = id;
     }
 
+    //getters and setters to access and update cart object variables
     public String getTitle() {
         return title;
     }

@@ -9,14 +9,16 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 public class registerPage {
-    DBMethods db = new DBMethods();
+    DBMethods booksDB = new DBMethods();
 
     public void start(Stage stage) {
         stage.setTitle("Create an Account");
 
+        //text asking customer to fill the registration form
         Label welcomeLabel = new Label("Please fill out the form to register.");
         welcomeLabel.setStyle("-fx-font-size: 15px;");
 
+        //Labels and text fields to obtain first name, last name, email, phone number and password
         Label fNameLabel = new Label("First Name:");
         TextField fName = new TextField();
         fName.setPromptText("Enter your First Name");
@@ -37,7 +39,7 @@ public class registerPage {
         PasswordField userPassword = new PasswordField();
         userPassword.setPromptText("Enter your password");
 
-
+        //creating login and registration buttons
         Button loginButton = new Button("Login");
         Button registerButton = new Button("Register");
 
@@ -45,11 +47,7 @@ public class registerPage {
         buttonBox.getChildren().addAll(registerButton, loginButton);
 
         VBox formLayout = new VBox(10);
-        formLayout.getChildren().addAll(
-                welcomeLabel, fNameLabel, fName, lNameLabel, lName, emailLabel, userEmail,
-                phoneNumLabel, phoneNum, passwordLabel, userPassword,
-                buttonBox
-        );
+        formLayout.getChildren().addAll(welcomeLabel, fNameLabel, fName, lNameLabel, lName, emailLabel, userEmail,phoneNumLabel, phoneNum, passwordLabel, userPassword, buttonBox);
         formLayout.setPadding(new Insets(30));
 
         HBox outerLayout = new HBox();
@@ -63,6 +61,7 @@ public class registerPage {
         stage.setScene(scene);
         stage.show();
 
+        //action for registration button to use inputted information to create entry in Customer table if the customer doesn't exist but throw an exception if they do
         registerButton.setOnAction(e -> {
             String firstName = fName.getText();
             String lastName = lName.getText();
@@ -71,13 +70,14 @@ public class registerPage {
             String password = userPassword.getText();
 
             try {
+                //checks for valid email and phone number
                 if(!email.contains("@") || !email.contains(".")){
                     throw new InvalidEntryException("Please Enter a valid email");
                 }
                 if(phoneNumber.length() != 10){
                     throw new InvalidEntryException("Please Enter a valid phone number");
                 }
-                db.register(firstName,lastName,email, phoneNumber,password);
+                booksDB.register(firstName,lastName,email, phoneNumber,password);
                 Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
                 successAlert.setContentText("Registration Successful!");
                 successAlert.showAndWait();
@@ -90,6 +90,7 @@ public class registerPage {
             }
         });
 
+        //action for register button to go to registration page
         loginButton.setOnAction(e -> {
             LoginPage loginPage = new LoginPage();
             loginPage.start(stage);

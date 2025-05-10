@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS "Orders" (
 	"order_date" DATE NOT NULL,
 	FOREIGN KEY("customer_id") REFERENCES "Customer"("id"),
 	FOREIGN KEY("book_id") REFERENCES "Book"("id"),
-	PRIMARY KEY("id", "customer_id", "book_id")
+	PRIMARY KEY("id")
 );
 CREATE TABLE IF NOT EXISTS "Cart" (
 	"customer_id"	INTEGER NOT NULL,

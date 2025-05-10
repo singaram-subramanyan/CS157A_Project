@@ -50,20 +50,20 @@ INSERT INTO Books ("id", "Title", "Author", "Genre", "Price", "stock") VALUES (1
 INSERT INTO Books ("id", "Title", "Author", "Genre", "Price", "stock") VALUES (14, 'Brave New World', 'Aldous Huxley', 'Dystopian', 9.99, 200);
 INSERT INTO Books ("id", "Title", "Author", "Genre", "Price", "stock") VALUES (15, 'The Road', 'Cormac McCarthy', 'Post-apocalyptic', 11.49, 130);
 
-INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107077, 153397236, 9, 1, '2025-04-23');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107071, 153397236, 9, 1, '2025-04-23');
 INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107070, 153397236, 2, 1, '2025-04-23');
-INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107070, 153397236, 3, 1, '2025-04-23');
-INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107071, 160004112, 5, 2, '2025-04-24');
-INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107072, 160004112, 1, 1, '2025-04-24');
-INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107073, 147891204, 7, 1, '2025-04-25');
-INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107074, 147891204, 8, 3, '2025-04-25');
-INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107080, 164200301, 4, 1, '2025-04-26');
-INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107080, 164200301, 6, 2, '2025-04-26');
-INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107081, 172903112, 11, 1, '2025-04-26');
-INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107082, 172903112, 14, 1, '2025-04-27');
-INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107083, 178882910, 7, 2, '2025-04-27');
-INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107084, 190033221, 10, 1, '2025-04-27');
-INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107085, 190033221, 1, 1, '2025-04-28');
-INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date")  VALUES (114107085, 190033221, 13, 1, '2025-04-28');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107072, 153397236, 3, 1, '2025-04-23');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107073, 160004112, 5, 2, '2025-04-24');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107074, 160004112, 1, 1, '2025-04-24');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107075, 147891204, 7, 1, '2025-04-25');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107076, 147891204, 8, 3, '2025-04-25');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107087, 164200301, 4, 1, '2025-04-26');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107088, 164200301, 6, 2, '2025-04-26');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107089, 172903112, 11, 1, '2025-04-26');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107080, 172903112, 14, 1, '2025-04-27');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107081, 178882910, 7, 2, '2025-04-27');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107082, 190033221, 10, 1, '2025-04-27');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date") VALUES (114107083, 190033221, 1, 1, '2025-04-28');
+INSERT INTO Orders ("id", "customer_id", "book_id", "quantity", "order_date")  VALUES (114107084, 190033221, 13, 1, '2025-04-28');
 
 COMMIT;

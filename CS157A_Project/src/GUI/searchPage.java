@@ -16,6 +16,7 @@ public class searchPage {
     private int custId;
     private DBMethods booksDB;
 
+    //constructor for searchPage
     public searchPage(int custId) {
         this.custId = custId;
         this.booksDB = new DBMethods();
@@ -23,8 +24,9 @@ public class searchPage {
 
     public void start(Stage stage) {
         TextField searchField = new TextField();
-        searchField.setPromptText("Search for books...");
+        searchField.setPromptText("Search for books");
 
+        //button for search, cart and logout
         Button searchButton = new Button("Search");
         Button viewCartButton = new Button("Cart");
         Button logoutButton = new Button("Logout");
@@ -33,6 +35,7 @@ public class searchPage {
 
         VBox searchResultContainer = new VBox(30);  // Container for search results
         searchResultContainer.setPadding(new Insets(10));
+        //uses returnall method to get all books from the database and display them
         List<Book> allBooks = booksDB.returnAll();
         for (Book book : allBooks) {
             Label title = new Label(book.getTitle());

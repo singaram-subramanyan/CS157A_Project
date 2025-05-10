@@ -10,15 +10,17 @@ import Custom_Exceptions.InvalidLoginException;
 
 public class LoginPage extends Application {
 
-    DBMethods db = new DBMethods();
+    DBMethods booksDB = new DBMethods();
 
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Welcome to the Bookstore");
 
+        //text asking customer to fill the login form
         Label welcomeLabel = new Label("Welcome! Please log in below.");
         welcomeLabel.setStyle("-fx-font-size: 15px;");
 
+        //Labels and text fields to obtain email and password
         Label emailLabel = new Label("Email:");
         TextField user_email = new TextField();
         user_email.setPromptText("Enter your email");
@@ -27,6 +29,7 @@ public class LoginPage extends Application {
         PasswordField user_password = new PasswordField();
         user_password.setPromptText("Enter your password");
 
+        //creating login and registration buttons
         Button loginButton = new Button("Login");
         Button registerButton = new Button("Register");
 
@@ -52,13 +55,14 @@ public class LoginPage extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+        //action for login button to validate login and go to main search page if successful otherwise throw an exception
         loginButton.setOnAction(e -> {
             String email = user_email.getText();
             String password = user_password.getText();
 
             try {
-                db.validateLogin(email, password);
-                searchPage mainPage = new searchPage(db.getCustID(email));
+                booksDB.validateLogin(email, password);
+                searchPage mainPage = new searchPage(booksDB.getCustID(email));
                 mainPage.start(primaryStage);
             } catch (InvalidLoginException ex) {
                 Alert errorAlert = new Alert(Alert.AlertType.ERROR);
@@ -71,6 +75,7 @@ public class LoginPage extends Application {
             }
         });
 
+        //action for register button to go to registration page
         registerButton.setOnAction(e -> {
             registerPage registerPage = new registerPage();
             registerPage.start(primaryStage);

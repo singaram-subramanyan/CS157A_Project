@@ -8,6 +8,7 @@ public class Book {
     public float price;
     public String availability;
 
+    //constructor book class
     public Book(int id, String title, String author, String genre, float price, String availability) {
         this.id = id;
         this.title = title;
@@ -18,6 +19,7 @@ public class Book {
 
     }
 
+    //getters and setters to access and update book variables
     public int getId() {
         return id;
     }
